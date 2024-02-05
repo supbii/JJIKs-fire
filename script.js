@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const pang = document.getElementById('pang');
 
     document.addEventListener('click', (event) => {
-        const offsetX = 120;
-        const offsetY = 960;
+        const offsetX = 100;
+        const offsetY = 660;
     
         pangContainer.style.left = (event.pageX - offsetX) + 'px';
         pangContainer.style.top = (event.pageY - offsetY) + 'px';
@@ -16,6 +16,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 500);
     });
 
+        //초기화 버튼
+    const resetButton = document.getElementById('resetButton');
+    resetButton.addEventListener('click', resetApplication);
+
+    function resetApplication() {
+        location.reload();
+    }
+    
         // 상단 버튼
         let savedStates = [];
 
@@ -33,29 +41,6 @@ document.addEventListener('DOMContentLoaded', function() {
             animalMusic.muted = !animalMusic.muted;
             updateAnimalImages(animalId, animalMusic.muted);
             updateSaveButtonState();
-        }
-
-        function loadCombination(index) {
-            const state = savedStates[index];
-        
-            Object.keys(state).forEach(animal => {
-                const isMuted = !state[animal];
-                document.getElementById(`${animal}Music`).muted = isMuted;
-                const standbyImage = document.getElementById(`${animal}standby`);
-                const play1Image = document.getElementById(`${animal}play1`);
-                const play2Image = document.getElementById(`${animal}play2`);
-        
-                if (!isMuted) {
-                    standbyImage.style.display = 'none';
-                    play1Image.style.display = 'block';
-                    play2Image.style.display = 'none';
-                } else {
-                    standbyImage.style.display = 'block';
-                    play1Image.style.display = 'none';
-                    play2Image.style.display = 'none';
-                }
-            });
-            updateSaveButtonState(); // 상태 업데이트 호출 추가
         }
 
         // '저장하기' 버튼 상태 업데이트 함수
@@ -147,6 +132,21 @@ document.addEventListener('DOMContentLoaded', function() {
         function loadCombination(index) {
             const state = savedStates[index];
 
+            // 모든 동물의 상태를 초기화
+            switchToVcStandby();
+            switchToFlStandby();
+            switchToUkuStandby();
+            switchToDjbStandby();
+            switchToDrStandby();
+            switchToVnStandby();
+            switchToTrbStandby();
+            switchToGtrStandby();
+            switchToPfStandby();
+            switchToCbStandby();
+            switchToTrpStandby();
+            switchToVoStandby();
+
+            // 불러온 조합의 상태를 적용
             Object.keys(state).forEach(animal => {
                 const isMuted = !state[animal];
                 document.getElementById(`${animal}Music`).muted = isMuted;
@@ -156,11 +156,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
                 if (!isMuted) {
                     standbyImage.style.display = 'none';
-                    play1Image.style.display = 'block';
-                    play2Image.style.display = 'none';
-                    if (animal === 'vo') {
-                        switchToVoPlay1();
-                    }
+                    switchToPlay1(animal);
                 } else {
                     standbyImage.style.display = 'block';
                     play1Image.style.display = 'none';
@@ -173,9 +169,51 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         document.getElementById('saveButton').addEventListener('click', saveCurrentState);
     
+        function switchToPlay1(animal) {
+            switch (animal) {
+                case 'vc':
+                    switchToVcPlay1();
+                    break;
+                case 'fl':
+                    switchToFlPlay1();
+                    break;
+                case 'uku':
+                    switchToUkuPlay1();
+                    break;
+                case 'djb':
+                    switchToDjbPlay1();
+                    break;
+                case 'dr':
+                    switchToDrPlay1();
+                    break;
+                case 'vn':
+                    switchToVnPlay1();
+                    break;
+                case 'trb':
+                    switchToTrbPlay1();
+                    break;
+                case 'gtr':
+                    switchToGtrPlay1();
+                    break;
+                case 'pf':
+                    switchToPfPlay1();
+                    break;
+                case 'cb':
+                    switchToCbPlay1();
+                    break;
+                case 'trp':
+                    switchToTrpPlay1();
+                    break;
+                case 'vo':
+                    switchToVoPlay1();
+                    break;
+                default:
+                    break;
+            }
+        }
+        
         // 초기 상태 업데이트
         updateSavedCombinationsUI();
-        updateSaveButtonState();
         updateSaveButtonState();
 
     var vcStandby = document.getElementById('vcstandby');
@@ -538,8 +576,8 @@ document.addEventListener('DOMContentLoaded', function() {
         gtrPlay1.style.display = 'none';
         gtrPlay2.style.display = 'none';
         gtrStandby.style.display = 'block';
-        gtrMusic.pause();
         gtrMusic.muted = true;
+        gtrMusic.currentTime = 0;
         clearTimeout(gtrTimerId);
         updateSaveButtonState();
     }
@@ -656,6 +694,7 @@ document.addEventListener('DOMContentLoaded', function() {
         voMusic.muted = false;
         voTimerId = setTimeout(switchToVoPlay2, play1Duration);
         voShadow.style.display = 'block';
+        updateSaveButtonState();
     }
     
     function switchToVoPlay2() {
@@ -664,6 +703,7 @@ document.addEventListener('DOMContentLoaded', function() {
         voStandby.style.display = 'none';
         voMusic.muted = false;
         voTimerId = setTimeout(switchToVoPlay1, play2Duration);
+        updateSaveButtonState();
     }
     
     function switchToVoStandby() {
@@ -684,6 +724,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 300);
         }, 200);
         isMoved = false;
+        updateSaveButtonState();
     }
 
     voStandby.addEventListener('click', function () {
@@ -730,13 +771,6 @@ document.addEventListener('DOMContentLoaded', function() {
         updatePages(); 
         popup.style.display = "block";
         popupBack.style.display = "block";
-    };
-    // 팝업 외부 클릭 시 닫기 이벤트
-    window.onclick = function(event) {
-        if (!popup.contains(event.target)) {
-            popup.style.display = "none";
-            popupBack.style.display = "none";
-        }
     };
     // 오버레이 클릭 시 팝업 닫기
     popupBack.onclick = function() {
